@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mundo Corpuscular: El Secreto de los Cristales</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Fredoka for playful science feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js Library & OrbitControls for 3D Crystal Visualizations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Fredoka', 'cursive'],
+                    },
+                    colors: {
+                        crystal: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        },
+                        violetCrystal: '#8b5cf6',
+                        emeraldCrystal: '#10b981',
+                        amberCrystal: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .font-display {
+            font-family: 'Fredoka', cursive;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0ea5e9;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 25px rgba(14, 165, 233, 0.3);
+        }
+        .glow-purple {
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-sky-500 selection:text-white">
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 glass-panel border-b border-slate-800 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-sky-400 to-indigo-500 p-2.5 rounded-xl shadow-lg">
+                    <i class="fa-solid font-bold fa-cubes text-slate-950 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-display text-xl md:text-2xl font-bold bg-gradient-to-r from-sky-400 via-indigo-300 to-emerald-400 bg-clip-text text-transparent">
+                        Mundo Corpuscular
+                    </h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">Laboratorio de Cristales • 6° de Primaria</p>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex space-x-6 text-sm font-medium">
+                <a href="#intro" class="hover:text-sky-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-atom"></i> ¿Qué son?</a>
+                <a href="#visor-3d" class="hover:text-sky-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-cube"></i> Visor 3D</a>
+                <a href="#laboratorio" class="hover:text-sky-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-flask"></i> Laboratorio</a>
+                <a href="#desafio" class="hover:text-sky-400 transition-colors flex items-center gap-1.5"><i class="fa-solid fa-trophy text-amber-400"></i> Desafío</a>
+            </div>
+
+            <button id="mobileMenuBtn" class="md:hidden text-slate-300 hover:text-white focus:outline-none text-xl p-2">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile menu dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden pt-4 pb-2 px-2 flex flex-col space-y-2 border-t border-slate-800 mt-2">
+            <a href="#intro" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-200">¿Qué son?</a>
+            <a href="#visor-3d" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-200">Visor 3D de Cristales</a>
+            <a href="#laboratorio" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-200">Laboratorio Corpuscular</a>
+            <a href="#desafio" class="px-3 py-2 rounded-lg hover:bg-slate-800 text-slate-200">Desafío Final</a>
+        </div>
+    </nav>
+
+    <!-- Hero Header -->
+    <header id="intro" class="relative overflow-hidden py-12 md:py-16 px-4 bg-gradient-to-b from-slate-900 via-slate-900/90 to-slate-950">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div class="space-y-6">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs md:text-sm font-semibold">
+                    <i class="fa-solid fa-sparkles"></i> ¡Explora el micromundo invisible!
+                </div>
+                <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
+                    Descubre el secreto de los <span class="bg-gradient-to-r from-sky-400 to-indigo-400 bg-clip-text text-transparent">Cristales</span>
+                </h2>
+                <p class="text-slate-300 text-base md:text-lg leading-relaxed">
+                    Toda la materia está formada por diminutas partículas (átomos o moléculas). Cuando se ordenan en filas y patrones geométricos perfectos, ¡se forman los deslumbrantes <strong class="text-sky-300 font-semibold">cristales</strong>!
+                </p>
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <a href="#visor-3d" class="px-6 py-3 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold shadow-lg shadow-sky-500/25 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+                        <i class="fa-solid fa-microscope"></i> Ver en 3D
+                    </a>
+                    <a href="#laboratorio" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-flask"></i> Experimento Virtual
+                    </a>
+                </div>
+            </div>
+
+            <!-- Intro Feature Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="glass-panel p-5 rounded-2xl border-l-4 border-l-sky-400 hover:border-slate-600 transition-all">
+                    <div class="text-sky-400 text-2xl mb-2"><i class="fa-solid fa-border-all"></i></div>
+                    <h3 class="font-display text-lg font-semibold text-white">Modelo Corpuscular</h3>
+                    <p class="text-slate-400 text-xs mt-1">Imagina las partículas como pequeñas esferas invisibles que jamás paran de moverse.</p>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl border-l-4 border-l-emerald-400 hover:border-slate-600 transition-all">
+                    <div class="text-emerald-400 text-2xl mb-2"><i class="fa-solid fa-gem"></i></div>
+                    <h3 class="font-display text-lg font-semibold text-white">Orden Cristalino</h3>
+                    <p class="text-slate-400 text-xs mt-1">Las partículas forman patrones repetitivos como soldados marchando alineados.</p>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl border-l-4 border-l-amber-400 hover:border-slate-600 transition-all">
+                    <div class="text-amber-400 text-2xl mb-2"><i class="fa-solid fa-glass-water font-bold"></i></div>
+                    <h3 class="font-display text-lg font-semibold text-white">Sólidos Amorfos</h3>
+                    <p class="text-slate-400 text-xs mt-1">Como el vidrio: sólidos donde las partículas quedaron atrapadas desordenadas.</p>
+                </div>
+                <div class="glass-panel p-5 rounded-2xl border-l-4 border-l-purple-400 hover:border-slate-600 transition-all">
+                    <div class="text-purple-400 text-2xl mb-2"><i class="fa-solid fa-temperature-three-quarters"></i></div>
+                    <h3 class="font-display text-lg font-semibold text-white">Temperatura</h3>
+                    <p class="text-slate-400 text-xs mt-1">El calor las hace vibrar fuerte; el frío permite que se acomoden despacio.</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3D Viewer Section -->
+    <section id="visor-3d" class="py-12 px-4 max-w-7xl mx-auto w-full">
+        <div class="text-center max-w-3xl mx-auto mb-8">
+            <span class="text-sky-400 font-semibold text-sm uppercase tracking-wider">Explorador Interactivo</span>
+            <h2 class="font-display text-3xl md:text-4xl font-extrabold text-white mt-1">
+                Visor 3D de Redes Cristalinas
+            </h2>
+            <p class="text-slate-400 text-sm md:text-base mt-2">
+                Usa tu ratón o dedo para <strong>girar, acercar y examinar</strong> cómo están ordenados los átomos en cada sustancia por dentro.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            <!-- Left Control Panel & Crystal Selection -->
+            <div class="lg:col-span-1 space-y-4">
+                <div class="glass-panel p-5 rounded-2xl border border-slate-700/60">
+                    <h3 class="font-display text-lg font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-hand-pointer text-sky-400"></i> Elige un Cristal:
+                    </h3>
+                    <div class="space-y-2.5" id="crystalSelector">
+                        <button onclick="selectCrystal('nacl')" id="btn-nacl" class="crystal-btn w-full text-left p-3.5 rounded-xl border transition-all flex items-center justify-between bg-sky-500/20 border-sky-400 text-white font-medium">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-lg bg-sky-500/30 flex items-center justify-center text-sky-300 font-bold text-sm">NaCl</span>
+                                <div>
+                                    <div class="font-bold">Sal de Mesa</div>
+                                    <div class="text-xs text-slate-300">Cloruro de Sodio (Cúbico)</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-xs opacity-70"></i>
+                        </button>
+
+                        <button onclick="selectCrystal('hielo')" id="btn-hielo" class="crystal-btn w-full text-left p-3.5 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-800/60 text-slate-300 transition-all flex items-center justify-between font-medium">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-lg bg-cyan-500/30 flex items-center justify-center text-cyan-300 font-bold text-sm">H₂O</span>
+                                <div>
+                                    <div class="font-bold">Hielo de Agua</div>
+                                    <div class="text-xs text-slate-400">Red Hexagonal Abierta</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-xs opacity-70"></i>
+                        </button>
+
+                        <button onclick="selectCrystal('diamante')" id="btn-diamante" class="crystal-btn w-full text-left p-3.5 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-800/60 text-slate-300 transition-all flex items-center justify-between font-medium">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-lg bg-emerald-500/30 flex items-center justify-center text-emerald-300 font-bold text-sm">C</span>
+                                <div>
+                                    <div class="font-bold">Diamante</div>
+                                    <div class="text-xs text-slate-400">Carbono Tetraédrico</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-xs opacity-70"></i>
+                        </button>
+
+                        <button onclick="selectCrystal('vidrio')" id="btn-vidrio" class="crystal-btn w-full text-left p-3.5 rounded-xl border border-slate-700 hover:border-slate-500 bg-slate-800/60 text-slate-300 transition-all flex items-center justify-between font-medium">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-lg bg-amber-500/30 flex items-center justify-center text-amber-300 font-bold text-sm">SiO₂</span>
+                                <div>
+                                    <div class="font-bold">Vidrio (Sólido Amorfo)</div>
+                                    <div class="text-xs text-slate-400">Partículas Desordenadas</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-xs opacity-70"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Particle Temperature Controls -->
+                <div class="glass-panel p-5 rounded-2xl border border-slate-700/60 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <label for="tempSlider" class="font-display text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-fire-flame-curved text-amber-400"></i> Vibración Térmica:
+                        </label>
+                        <span id="tempValue" class="text-xs font-mono bg-slate-800 px-2 py-1 rounded text-sky-400 border border-slate-700">Normal (Vibración Baja)</span>
+                    </div>
+                    <input type="range" id="tempSlider" min="0" max="100" value="20" class="w-full accent-sky-400 cursor-pointer">
+                    <p class="text-xs text-slate-400">
+                        <i class="fa-solid fa-circle-info text-sky-400 mr-1"></i>
+                        En un sólido, las partículas no se desplazan, solo <strong>vibran</strong> en su lugar fijo. ¡Sube la temperatura para ver cómo tiemblan!
+                    </p>
+                </div>
+            </div>
+
+            <!-- 3D Canvas Viewport -->
+            <div class="lg:col-span-2 flex flex-col space-y-3">
+                <div class="relative w-full h-[420px] md:h-[480px] rounded-2xl overflow-hidden glass-panel border border-slate-700/80 shadow-2xl">
+                    <!-- Canvas Container -->
+                    <div id="threejs-container" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+                    <!-- Overlay Legend -->
+                    <div class="absolute top-4 left-4 glass-panel px-4 py-2.5 rounded-xl border border-slate-700/50 text-xs space-y-1 z-10" id="crystalLegend">
+                        <!-- Dynamic Legend content inserted via JS -->
+                    </div>
+
+                    <!-- Viewport Controls HUD -->
+                    <div class="absolute bottom-4 right-4 flex gap-2 z-10">
+                        <button onclick="reset3DCamera()" class="px-3 py-2 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-medium text-slate-200 transition-colors flex items-center gap-1.5 shadow">
+                            <i class="fa-solid fa-rotate-left"></i> Centrar vista
+                        </button>
+                        <button id="toggleWireframeBtn" onclick="toggleWireframe()" class="px-3 py-2 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-medium text-slate-200 transition-colors flex items-center gap-1.5 shadow">
+                            <i class="fa-solid fa-circle-nodes"></i> Mostrar Enlaces
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Crystal Info Box -->
+                <div id="crystalDescription" class="glass-panel p-5 rounded-2xl border border-sky-500/30 bg-slate-900/80">
+                    <!-- Dynamic text inserted via JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Crystalline vs Amorphous Educational Comparison -->
+    <section class="py-12 bg-slate-900/60 border-y border-slate-800 px-4">
+        <div class="max-w-6xl mx-auto space-y-8">
+            <div class="text-center max-w-2xl mx-auto">
+                <span class="text-indigo-400 font-semibold text-sm uppercase tracking-wider">Concepto Clave de 6° Grado</span>
+                <h2 class="font-display text-3xl font-extrabold text-white mt-1">¿Cómo reconocemos un Cristal?</h2>
+                <p class="text-slate-400 text-sm mt-2">La gran diferencia está en el <strong>microscópico orden interno</strong> de sus partículas.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Crystalline Card -->
+                <div class="glass-panel p-6 rounded-2xl border border-emerald-500/30 relative overflow-hidden group hover:border-emerald-500/60 transition-all">
+                    <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-emerald-500/20 text-emerald-400 rounded-xl font-bold text-xl">
+                            <i class="fa-solid fa-gem"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-display text-xl font-bold text-white">Sólido Cristalino</h3>
+                            <span class="text-xs text-emerald-400 font-semibold">Partículas Ordenadas</span>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 text-slate-300 text-sm">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                            <span>Sus partículas forman un <strong>patrón geométrico que se repite</strong> sin parar en todas direcciones.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                            <span>Tienen caras planas y ángulos definidos a simple vista (como los granos de sal o el cuarzo).</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-400 mt-1"></i>
+                            <span>Se derriten a una <strong>temperatura exacta</strong> (Punto de fusión fijo).</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Amorphous Card -->
+                <div class="glass-panel p-6 rounded-2xl border border-amber-500/30 relative overflow-hidden group hover:border-amber-500/60 transition-all">
+                    <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 bg-amber-500/20 text-amber-400 rounded-xl font-bold text-xl">
+                            <i class="fa-solid fa-wine-glass"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-display text-xl font-bold text-white">Sólido Amorfo</h3>
+                            <span class="text-xs text-amber-400 font-semibold">Partículas Desordenadas</span>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 text-slate-300 text-sm">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-amber-400 mt-1"></i>
+                            <span>Sus partículas están amontonadas <strong>sin ningún orden periódico</strong> (parecido a un líquido congelado).</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-amber-400 mt-1"></i>
+                            <span>Ejemplos cotidianos: el <strong>vidrio de las ventanas</strong>, la cera de una vela o el plástico.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-circle-check text-amber-400 mt-1"></i>
+                            <span>Al calentarse se ablandan poco a poco antes de volverse totalmente líquidos.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Lab Section: Cooling rate experiment -->
+    <section id="laboratorio" class="py-12 px-4 max-w-7xl mx-auto w-full">
+        <div class="text-center max-w-3xl mx-auto mb-8">
+            <span class="text-emerald-400 font-semibold text-sm uppercase tracking-wider">Taller Científico Virtual</span>
+            <h2 class="font-display text-3xl md:text-4xl font-extrabold text-white mt-1">
+                Laboratorio de Crecimiento Cristalino
+            </h2>
+            <p class="text-slate-400 text-sm md:text-base mt-2">
+                ¿Qué pasa cuando un líquido caliente se enfría? La <strong>velocidad de enfriamiento</strong> decide si se formará un hermoso cristal gigante o un material amorfo.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <!-- Canvas Simulation Box -->
+            <div class="lg:col-span-8 glass-panel p-4 rounded-2xl border border-slate-700 flex flex-col items-center">
+                <div class="w-full flex items-center justify-between mb-3 px-2">
+                    <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-microscope text-sky-400"></i> Simulación en tiempo real de partículas
+                    </span>
+                    <span id="labStatusBadge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        Estado: Solución Caliente (Líquido)
+                    </span>
+                </div>
+
+                <canvas id="labCanvas" class="w-full h-80 bg-slate-950 rounded-xl border border-slate-800 shadow-inner cursor-pointer"></canvas>
+
+                <div class="w-full grid grid-cols-3 gap-2 mt-4 text-center text-xs">
+                    <div class="bg-slate-800/60 p-2.5 rounded-xl border border-slate-700">
+                        <div class="text-slate-400 mb-1">Partículas Totales</div>
+                        <div class="font-bold text-white text-base" id="statParticles">120</div>
+                    </div>
+                    <div class="bg-slate-800/60 p-2.5 rounded-xl border border-slate-700">
+                        <div class="text-slate-400 mb-1">Temperatura Simulada</div>
+                        <div class="font-bold text-amber-400 text-base" id="statTemp">90 °C</div>
+                    </div>
+                    <div class="bg-slate-800/60 p-2.5 rounded-xl border border-slate-700">
+                        <div class="text-slate-400 mb-1">Nivel de Orden</div>
+                        <div class="font-bold text-emerald-400 text-base" id="statOrder">0% (Líquido)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Experiment Control Panel -->
+            <div class="lg:col-span-4 space-y-4">
+                <div class="glass-panel p-5 rounded-2xl border border-slate-700 space-y-4">
+                    <h3 class="font-display text-lg font-bold text-white border-b border-slate-700 pb-2">
+                        <i class="fa-solid fa-sliders text-emerald-400"></i> Controles del Experimento
+                    </h3>
+
+                    <button onclick="heatUpLab()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-red-500 to-amber-500 hover:from-red-400 hover:to-amber-400 text-white font-bold shadow transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-fire text-amber-200"></i> 1. Calentar y Derretir (Líquido)
+                    </button>
+
+                    <div class="pt-2 border-t border-slate-800 space-y-2">
+                        <p class="text-xs font-semibold text-slate-300">Elige la velocidad de enfriamiento:</p>
+                        
+                        <button onclick="coolLab('slow')" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow transition-all flex items-center justify-between text-sm">
+                            <span class="flex items-center gap-2"><i class="fa-solid fa-snowflake"></i> Enfriar Lento</span>
+                            <span class="text-xs bg-emerald-800 px-2 py-0.5 rounded text-emerald-200">Forma Cristal</span>
+                        </button>
+
+                        <button onclick="coolLab('fast')" class="w-full py-3 px-4 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold shadow transition-all flex items-center justify-between text-sm">
+                            <span class="flex items-center gap-2"><i class="fa-solid fa-bolt"></i> Enfriar Rápido</span>
+                            <span class="text-xs bg-cyan-800 px-2 py-0.5 rounded text-cyan-200">Forma Vidrio</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-1.5 leading-relaxed">
+                        <div class="font-bold text-sky-400 flex items-center gap-1">
+                            <i class="fa-solid fa-lightbulb"></i> ¿Sabías qué?
+                        </div>
+                        <p id="labExplanation">
+                            Si las partículas se enfrían <strong>lentamente</strong>, tienen tiempo suficiente para moverse, acomodarse y encajar perfectas en la red cristalina.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gamified Quiz Section -->
+    <section id="desafio" class="py-12 px-4 max-w-4xl mx-auto w-full">
+        <div class="glass-panel p-6 md:p-8 rounded-3xl border border-amber-500/30 relative overflow-hidden shadow-2xl">
+            <div class="text-center mb-8">
+                <span class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full text-xs font-bold uppercase tracking-wider">
+                    <i class="fa-solid fa-trophy mr-1"></i> Desafío Final
+                </span>
+                <h2 class="font-display text-3xl md:text-4xl font-extrabold text-white mt-2">
+                    ¿Cuánto aprendiste sobre los Cristales?
+                </h2>
+                <p class="text-slate-400 text-sm mt-1">Responde las preguntas para ganar tu medalla de <strong>Maestro Corpuscular</strong>.</p>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quizContainer" class="space-y-6">
+                <!-- Question Header -->
+                <div class="flex items-center justify-between border-b border-slate-700/80 pb-3 text-sm">
+                    <span id="quizProgress" class="font-semibold text-sky-400">Pregunta 1 de 4</span>
+                    <span id="quizScore" class="font-mono bg-slate-800 px-3 py-1 rounded-full border border-slate-700 text-amber-400 font-bold">Puntos: 0</span>
+                </div>
+
+                <!-- Dynamic Question Body -->
+                <div id="quizCard" class="space-y-4">
+                    <h3 id="quizQuestion" class="font-display text-xl font-bold text-white">
+                        <!-- Text loaded by JS -->
+                    </h3>
+                    <div id="quizOptions" class="grid grid-cols-1 gap-3">
+                        <!-- Buttons loaded by JS -->
+                    </div>
+                </div>
+
+                <!-- Feedback Toast -->
+                <div id="quizFeedback" class="hidden p-4 rounded-xl text-sm font-medium transition-all flex items-center justify-between">
+                    <div id="quizFeedbackText"></div>
+                    <button id="nextQuestionBtn" onclick="nextQuestion()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-bold transition-all">
+                        Siguiente <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Completion Modal -->
+            <div id="quizResultModal" class="hidden text-center py-8 space-y-6">
+                <div class="w-20 h-20 bg-gradient-to-tr from-amber-400 to-yellow-200 rounded-full flex items-center justify-center mx-auto text-slate-950 text-4xl shadow-xl shadow-amber-400/20 animate-bounce">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <div>
+                    <h3 class="font-display text-3xl font-extrabold text-white">¡Felicitaciones!</h3>
+                    <p class="text-slate-300 text-base mt-2" id="finalResultText">Has obtenido una puntuación perfecta.</p>
+                </div>
+                <button onclick="restartQuiz()" class="px-6 py-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg transition-all">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> Intentar de Nuevo
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-auto py-8 border-t border-slate-800 bg-slate-950 px-4 text-center text-xs text-slate-500 space-y-2">
+        <p class="font-medium text-slate-400">Mundo Corpuscular • Recurso Educativo Interactivo para Ciencias Naturales (6° Grado)</p>
+        <p>Diseñado para comprender la estructura atómica y molecular de los sólidos de forma visual e intuitiva.</p>
+    </footer>
+
+    <script>
+        /* ----------------------------------------------------
+           1. THREE.JS 3D CRYSTAL LATTICE VISUALIZER
+           ---------------------------------------------------- */
+        let scene, camera, renderer, controls;
+        let crystalGroup;
+        let currentCrystalType = 'nacl';
+        let showBonds = true;
+        let thermalVibration = 0.02; // Initial low vibration
+
+        const crystalData = {
+            nacl: {
+                title: "Cloruro de Sodio (Sal de Mesa)",
+                formula: "NaCl",
+                type: "Cúbico Centrado en las Caras",
+                desc: "Los iones de <strong>Sodio (naranja)</strong> y <strong>Cloro (verde)</strong> se alternan creando una red en forma de cubo perfecto. Esta estructura ordenada es la razón por la que los granos de sal parecen pequeños cubitos transparentes.",
+                legend: [
+                    { color: "#38bdf8", label: "Ión Sodio (Na⁺)" },
+                    { color: "#4ade80", label: "Ión Cloro (Cl⁻)" }
+                ]
+            },
+            hielo: {
+                title: "Hielo de Agua",
+                formula: "H₂O",
+                type: "Hexagonal Cristalino",
+                desc: "Las moléculas de agua se unen formando <strong>anillos de 6 lados (hexagonales)</strong>. Esta estructura deja pequeños espacios vacíos microscópicos en el centro, ¡lo que hace que el hielo sea menos denso que el agua líquida y por eso flote!",
+                legend: [
+                    { color: "#ef4444", label: "Átomo de Oxígeno (O)" },
+                    { color: "#f8fafc", label: "Átomo de Hidrógeno (H)" }
+                ]
+            },
+            diamante: {
+                title: "Diamante",
+                formula: "C",
+                type: "Red Tetraédrica",
+                desc: "Formado únicamente por átomos de <strong>Carbono (gris brillante)</strong>. Cada carbono se une firmemente a otros 4 en forma de pirámide (tetraedro). ¡Esta red ultra resistente lo convierte en el mineral más duro de la Tierra!",
+                legend: [
+                    { color: "#e2e8f0", label: "Átomo de Carbono (C)" }
+                ]
+            },
+            vidrio: {
+                title: "Vidrio (Sólido Amorfo)",
+                formula: "SiO₂ (Sílice)",
+                type: "Red Desordenada / No cristalina",
+                desc: "A diferencia de la sal o el hielo, en el vidrio las partículas están <strong>desordenadas y amontonadas al azar</strong>. Como se enfrió tan rápido, las partículas no tuvieron tiempo de organizarse en una red regular.",
+                legend: [
+                    { color: "#f59e0b", label: "Silicio / Oxígeno (Desorden)" }
+                ]
+            }
+        };
+
+        // Initialize 3D Scene
+        function init3D() {
+            const container = document.getElementById('threejs-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0b1329);
+
+            camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+            camera.position.set(6, 6, 9);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxDistance = 20;
+            controls.minDistance = 3;
+
+            // Ambient & Directional Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight1.position.set(10, 15, 10);
+            scene.add(dirLight1);
+
+            const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.5);
+            dirLight2.position.set(-10, -10, -10);
+            scene.add(dirLight2);
+
+            crystalGroup = new THREE.Group();
+            scene.add(crystalGroup);
+
+            // Initial render
+            buildCrystalLattice('nacl');
+
+            // Responsive resize
+            window.addEventListener('resize', onWindowResize);
+
+            // Start animation loop
+            animate3D();
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('threejs-container');
+            if (!container) return;
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        // Build different Crystal Structures
+        function buildCrystalLattice(type) {
+            // Clear previous meshes
+            while(crystalGroup.children.length > 0){ 
+                const obj = crystalGroup.children[0];
+                if(obj.geometry) obj.geometry.dispose();
+                crystalGroup.remove(obj); 
+            }
+
+            const atoms = [];
+
+            if (type === 'nacl') {
+                // 3x3x3 Grid of alternating Na and Cl ions
+                const size = 3;
+                const spacing = 1.6;
+                const offset = ((size - 1) * spacing) / 2;
+
+                const geoNa = new THREE.SphereGeometry(0.35, 24, 24);
+                const matNa = new THREE.MeshStandardMaterial({ color: 0x38bdf8, roughness: 0.2, metalness: 0.3 });
+
+                const geoCl = new THREE.SphereGeometry(0.48, 24, 24);
+                const matCl = new THREE.MeshStandardMaterial({ color: 0x4ade80, roughness: 0.2, metalness: 0.2 });
+
+                for (let x = 0; x < size; x++) {
+                    for (let y = 0; y < size; y++) {
+                        for (let z = 0; z < size; z++) {
+                            const isNa = (x + y + z) % 2 === 0;
+                            const mesh = new THREE.Mesh(isNa ? geoNa : geoCl, isNa ? matNa : matCl);
+                            const basePos = new THREE.Vector3(
+                                x * spacing - offset,
+                                y * spacing - offset,
+                                z * spacing - offset
+                            );
+                            mesh.position.copy(basePos);
+                            mesh.userData = { basePos: basePos.clone() };
+                            crystalGroup.add(mesh);
+                            atoms.push(mesh);
+                        }
+                    }
+                }
+
+                // Add grid bonds
+                if (showBonds) {
+                    createBondsGrid(atoms, 1.7);
+                }
+            } 
+            else if (type === 'hielo') {
+                // Hexagonal Ice Lattice
+                const numRings = 6;
+                const radius = 1.8;
+                const geoO = new THREE.SphereGeometry(0.4, 24, 24);
+                const matO = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.3 });
+
+                const geoH = new THREE.SphereGeometry(0.2, 16, 16);
+                const matH = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.1 });
+
+                for (let layer = -1; layer <= 1; layer++) {
+                    const layerY = layer * 1.5;
+                    for (let i = 0; i < numRings; i++) {
+                        const angle = (i * Math.PI / 3) + (layer * 0.3);
+                        const x = Math.cos(angle) * radius;
+                        const z = Math.sin(angle) * radius;
+
+                        const oMesh = new THREE.Mesh(geoO, matO);
+                        const basePos = new THREE.Vector3(x, layerY, z);
+                        oMesh.position.copy(basePos);
+                        oMesh.userData = { basePos: basePos.clone() };
+                        crystalGroup.add(oMesh);
+                        atoms.push(oMesh);
+
+                        // Hydrogens around oxygen
+                        const hAngle = angle + 0.4;
+                        const hx = x + Math.cos(hAngle) * 0.6;
+                        const hz = z + Math.sin(hAngle) * 0.6;
+                        const hMesh = new THREE.Mesh(geoH, matH);
+                        const hPos = new THREE.Vector3(hx, layerY + 0.3, hz);
+                        hMesh.position.copy(hPos);
+                        hMesh.userData = { basePos: hPos.clone() };
+                        crystalGroup.add(hMesh);
+                    }
+                }
+                if (showBonds) createBondsGrid(atoms, 2.2);
+            } 
+            else if (type === 'diamante') {
+                // Diamond Tetrahedral Structure
+                const geoC = new THREE.SphereGeometry(0.35, 24, 24);
+                const matC = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.1, metalness: 0.8 });
+
+                const positions = [
+                    new THREE.Vector3(0, 0, 0),
+                    new THREE.Vector3(1.4, 1.4, 1.4),
+                    new THREE.Vector3(-1.4, -1.4, 1.4),
+                    new THREE.Vector3(-1.4, 1.4, -1.4),
+                    new THREE.Vector3(1.4, -1.4, -1.4),
+                    new THREE.Vector3(0, 2.8, 0),
+                    new THREE.Vector3(0, -2.8, 0),
+                    new THREE.Vector3(2.8, 0, 0),
+                    new THREE.Vector3(-2.8, 0, 0)
+                ];
+
+                positions.forEach(pos => {
+                    const mesh = new THREE.Mesh(geoC, matC);
+                    mesh.position.copy(pos);
+                    mesh.userData = { basePos: pos.clone() };
+                    crystalGroup.add(mesh);
+                    atoms.push(mesh);
+                });
+                if (showBonds) createBondsGrid(atoms, 2.6);
+            } 
+            else if (type === 'vidrio') {
+                // Amorphous Disordered Structure
+                const count = 32;
+                const geoGlass = new THREE.SphereGeometry(0.38, 20, 20);
+                const matGlass = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.4, transparent: true, opacity: 0.85 });
+
+                // Seed pseudo-random reproducible positions
+                for (let i = 0; i < count; i++) {
+                    const x = (Math.sin(i * 1.3) * 2.5);
+                    const y = (Math.cos(i * 2.1) * 2.5);
+                    const z = (Math.sin(i * 3.7) * 2.5);
+
+                    const mesh = new THREE.Mesh(geoGlass, matGlass);
+                    const pos = new THREE.Vector3(x, y, z);
+                    mesh.position.copy(pos);
+                    mesh.userData = { basePos: pos.clone() };
+                    crystalGroup.add(mesh);
+                    atoms.push(mesh);
+                }
+                if (showBonds) createBondsGrid(atoms, 1.9);
+            }
+
+            updateInfoUI(type);
+        }
+
+        // Helper to draw connecting bond lines
+        function createBondsGrid(atoms, maxDist) {
+            const lineMat = new THREE.LineBasicMaterial({ color: 0x64748b, transparent: true, opacity: 0.4 });
+            for (let i = 0; i < atoms.length; i++) {
+                for (let j = i + 1; j < atoms.length; j++) {
+                    const dist = atoms[i].position.distanceTo(atoms[j].position);
+                    if (dist < maxDist) {
+                        const geometry = new THREE.BufferGeometry().setFromPoints([
+                            atoms[i].position,
+                            atoms[j].position
+                        ]);
+                        const line = new THREE.Line(geometry, lineMat);
+                        line.userData = { atomA: atoms[i], atomB: atoms[j] };
+                        crystalGroup.add(line);
+                    }
+                }
+            }
+        }
+
+        // Animation Loop with Thermal Vibration
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+
+            // Gentle auto-rotation
+            crystalGroup.rotation.y += 0.003;
+
+            // Thermal vibration effect on atoms
+            const time = Date.now() * 0.01;
+            crystalGroup.children.forEach(child => {
+                if (child.isMesh && child.userData.basePos) {
+                    const amp = thermalVibration;
+                    child.position.x = child.userData.basePos.x + Math.sin(time + child.userData.basePos.y * 10) * amp;
+                    child.position.y = child.userData.basePos.y + Math.cos(time + child.userData.basePos.z * 10) * amp;
+                    child.position.z = child.userData.basePos.z + Math.sin(time + child.userData.basePos.x * 10) * amp;
+                }
+                // Update lines if bonds are present
+                if (child.isLine && child.userData.atomA && child.userData.atomB) {
+                    const positions = child.geometry.attributes.position.array;
+                    positions[0] = child.userData.atomA.position.x;
+                    positions[1] = child.userData.atomA.position.y;
+                    positions[2] = child.userData.atomA.position.z;
+                    positions[3] = child.userData.atomB.position.x;
+                    positions[4] = child.userData.atomB.position.y;
+                    positions[5] = child.userData.atomB.position.z;
+                    child.geometry.attributes.position.needsUpdate = true;
+                }
+            });
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        function selectCrystal(type) {
+            currentCrystalType = type;
+            // Update button styles
+            document.querySelectorAll('.crystal-btn').forEach(btn => {
+                btn.classList.remove('bg-sky-500/20', 'border-sky-400', 'text-white');
+                btn.classList.add('border-slate-700', 'bg-slate-800/60', 'text-slate-300');
+            });
+            const selectedBtn = document.getElementById(`btn-${type}`);
+            if (selectedBtn) {
+                selectedBtn.classList.remove('border-slate-700', 'bg-slate-800/60', 'text-slate-300');
+                selectedBtn.classList.add('bg-sky-500/20', 'border-sky-400', 'text-white');
+            }
+
+            buildCrystalLattice(type);
+        }
+
+        function updateInfoUI(type) {
+            const data = crystalData[type];
+            const legendContainer = document.getElementById('crystalLegend');
+            const descContainer = document.getElementById('crystalDescription');
+
+            // Legend HTML
+            let legendHTML = `<div class="font-bold text-slate-200 mb-1">${data.formula}</div>`;
+            data.legend.forEach(item => {
+                legendHTML += `
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full inline-block" style="background-color: ${item.color}"></span>
+                        <span class="text-slate-300">${item.label}</span>
+                    </div>
+                `;
+            });
+            legendContainer.innerHTML = legendHTML;
+
+            // Description HTML
+            descContainer.innerHTML = `
+                <div class="flex items-center justify-between mb-2">
+                    <h4 class="font-display text-xl font-bold text-white">${data.title}</h4>
+                    <span class="text-xs px-2.5 py-1 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30 font-semibold">${data.type}</span>
+                </div>
+                <p class="text-slate-300 text-sm leading-relaxed">${data.desc}</p>
+            `;
+        }
+
+        function reset3DCamera() {
+            camera.position.set(6, 6, 9);
+            controls.reset();
+        }
+
+        function toggleWireframe() {
+            showBonds = !showBonds;
+            buildCrystalLattice(currentCrystalType);
+            const btn = document.getElementById('toggleWireframeBtn');
+            btn.innerHTML = showBonds ? 
+                '<i class="fa-solid fa-circle-nodes"></i> Ocultar Enlaces' : 
+                '<i class="fa-solid fa-circle-nodes"></i> Mostrar Enlaces';
+        }
+
+        // Temperature Slider Listener
+        document.getElementById('tempSlider').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            thermalVibration = (val / 100) * 0.12; // Scale amplitude
+
+            const label = document.getElementById('tempValue');
+            if (val < 30) {
+                label.innerText = "Frío (Baja Vibración)";
+                label.className = "text-xs font-mono bg-slate-800 px-2 py-1 rounded text-sky-400 border border-slate-700";
+            } else if (val < 70) {
+                label.innerText = "Tibio (Vibración Media)";
+                label.className = "text-xs font-mono bg-slate-800 px-2 py-1 rounded text-amber-400 border border-slate-700";
+            } else {
+                label.innerText = "Caliente (¡Vibración Intensa!)";
+                label.className = "text-xs font-mono bg-slate-800 px-2 py-1 rounded text-red-400 border border-slate-700 font-bold";
+            }
+        });
+
+
+        /* ----------------------------------------------------
+           2. 2D CRYSTALLIZATION LAB CANVAS SIMULATION
+           ---------------------------------------------------- */
+        let labCanvas, labCtx;
+        let labParticles = [];
+        let labState = 'liquid'; // 'liquid', 'cooling_slow', 'cooling_fast', 'crystal', 'glass'
+        let labTemp = 90;
+        let labAnimId = null;
+
+        class LabParticle {
+            constructor(x, y, targetX, targetY) {
+                this.x = x;
+                this.y = y;
+                this.targetX = targetX;
+                this.targetY = targetY;
+                this.vx = (Math.random() - 0.5) * 3;
+                this.vy = (Math.random() - 0.5) * 3;
+                this.radius = 8;
+                this.color = '#0ea5e9';
+            }
+
+            update() {
+                if (labState === 'liquid') {
+                    // Free Brownian motion
+                    this.x += this.vx * (labTemp / 40);
+                    this.y += this.vy * (labTemp / 40);
+
+                    // Bounce on edges
+                    if (this.x < 15 || this.x > labCanvas.width - 15) this.vx *= -1;
+                    if (this.y < 15 || this.y > labCanvas.height - 15) this.vy *= -1;
+                } 
+                else if (labState === 'cooling_slow') {
+                    // Slowly drift to lattice target
+                    this.x += (this.targetX - this.x) * 0.04;
+                    this.y += (this.targetY - this.y) * 0.04;
+                    this.color = '#10b981'; // Turn emerald
+                } 
+                else if (labState === 'cooling_fast') {
+                    // Freeze in random place quickly
+                    this.vx *= 0.85;
+                    this.vy *= 0.85;
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.color = '#f59e0b'; // Turn amber
+                }
+            }
+
+            draw() {
+                labCtx.beginPath();
+                labCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                labCtx.fillStyle = this.color;
+                labCtx.shadowColor = this.color;
+                labCtx.shadowBlur = 8;
+                labCtx.fill();
+                labCtx.shadowBlur = 0;
+                labCtx.strokeStyle = '#ffffff';
+                labCtx.lineWidth = 1.5;
+                labCtx.stroke();
+            }
+        }
+
+        function initLabCanvas() {
+            labCanvas = document.getElementById('labCanvas');
+            labCtx = labCanvas.getContext('2d');
+            
+            // Set internal resolution
+            labCanvas.width = labCanvas.offsetWidth;
+            labCanvas.height = labCanvas.offsetHeight;
+
+            createLabParticles();
+            runLabLoop();
+        }
+
+        function createLabParticles() {
+            labParticles = [];
+            const cols = 12;
+            const rows = 6;
+            const startX = (labCanvas.width - (cols * 32)) / 2;
+            const startY = (labCanvas.height - (rows * 32)) / 2;
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    // Target grid position (Orderly crystal)
+                    const targetX = startX + c * 32;
+                    const targetY = startY + r * 32;
+
+                    // Random initial position
+                    const x = Math.random() * (labCanvas.width - 40) + 20;
+                    const y = Math.random() * (labCanvas.height - 40) + 20;
+
+                    labParticles.push(new LabParticle(x, y, targetX, targetY));
+                }
+            }
+        }
+
+        function runLabLoop() {
+            labCtx.clearRect(0, 0, labCanvas.width, labCanvas.height);
+
+            // Draw grid background guide lines if cooling slow
+            if (labState === 'cooling_slow' || labState === 'crystal') {
+                labCtx.strokeStyle = 'rgba(16, 185, 129, 0.15)';
+                labCtx.lineWidth = 1;
+                for (let i = 0; i < labCanvas.width; i += 32) {
+                    labCtx.beginPath();
+                    labCtx.moveTo(i, 0);
+                    labCtx.lineTo(i, labCanvas.height);
+                    labCtx.stroke();
+                }
+            }
+
+            labParticles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // Temperature decay logic
+            if (labState === 'cooling_slow') {
+                if (labTemp > 20) labTemp -= 0.5;
+                else labState = 'crystal';
+            } else if (labState === 'cooling_fast') {
+                if (labTemp > 20) labTemp -= 3.0; // Rapid drop
+                else labState = 'glass';
+            }
+
+            updateLabHUD();
+            labAnimId = requestAnimationFrame(runLabLoop);
+        }
+
+        function updateLabHUD() {
+            document.getElementById('statTemp').innerText = `${Math.round(labTemp)} °C`;
+            const badge = document.getElementById('labStatusBadge');
+            const exp = document.getElementById('labExplanation');
+            const orderStat = document.getElementById('statOrder');
+
+            if (labState === 'liquid') {
+                badge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                badge.innerText = "Estado: Líquido / Desordenado";
+                orderStat.innerText = "0% (Caótico)";
+            } else if (labState === 'cooling_slow' || labState === 'crystal') {
+                badge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                badge.innerText = labState === 'crystal' ? "¡Cristal Perfecto Formado!" : "Enfriando Lento...";
+                orderStat.innerText = labState === 'crystal' ? "100% (Red Cristalina)" : "Organizando...";
+                exp.innerHTML = "<strong>¡Éxito!</strong> Al enfriar despacio, las partículas tuvieron tiempo de encontrar su lugar en la red geométrica. Se formó un <strong>Sólido Cristalino</strong>.";
+            } else if (labState === 'cooling_fast' || labState === 'glass') {
+                badge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                badge.innerText = labState === 'glass' ? "Sólido Amorfo (Vidrio)" : "Enfriamiento Ultrarrápido...";
+                orderStat.innerText = "15% (Desorden Atrapado)";
+                exp.innerHTML = "<strong>¡Atrapadas!</strong> Como la temperatura bajó de golpe, las partículas no tuvieron tiempo de ordenarse. El resultado es un <strong>Sólido Amorfo (como el vidrio)</strong>.";
+            }
+        }
+
+        function heatUpLab() {
+            labState = 'liquid';
+            labTemp = 90;
+            createLabParticles();
+        }
+
+        function coolLab(speed) {
+            if (speed === 'slow') {
+                labState = 'cooling_slow';
+            } else {
+                labState = 'cooling_fast';
+            }
+        }
+
+
+        /* ----------------------------------------------------
+           3. INTERACTIVE QUIZ CHALLENGE (GAME)
+           ---------------------------------------------------- */
+        const quizQuestions = [
+            {
+                q: "¿Cómo se comportan las partículas en un sólido cristalino?",
+                options: [
+                    "Se mueven libremente por todo el recipiente.",
+                    "Están ordenadas en patrones geométricos y solo vibran en su lugar.",
+                    "Están completamente quietas sin moverse jamás.",
+                    "Cambian de forma constantemente."
+                ],
+                correct: 1,
+                exp: "¡Exacto! En un cristal las partículas ocupan posiciones fijas muy ordenadas y vibran sin desplazarse."
+            },
+            {
+                q: "¿Qué sucede si enfriamos una sustancia líquida MUY LENTAMENTE?",
+                options: [
+                    "Las partículas explotan.",
+                    "Se forma un sólido amorfo como el plástico.",
+                    "Las partículas tienen tiempo de acomodarse en una red cristalina perfecta.",
+                    "La sustancia permanece líquida para siempre."
+                ],
+                correct: 2,
+                exp: "¡Muy bien! El enfriamiento lento da el tiempo necesario para que las partículas formen cristales grandes y ordenados."
+            },
+            {
+                q: "¿Cuál de los siguientes materiales es un SÓLIDO AMORFO (no cristalino)?",
+                options: [
+                    "La sal de mesa (NaCl).",
+                    "El vidrio de las ventanas.",
+                    "El diamante.",
+                    "El cuarzo."
+                ],
+                correct: 1,
+                exp: "¡Correcto! El vidrio es un sólido amorfo porque sus partículas quedaron atrapadas de forma desordenada."
+            },
+            {
+                q: "¿Por qué flota el hielo de agua en el agua líquida?",
+                options: [
+                    "Porque el hielo es más caliente.",
+                    "Porque las partículas de hielo son más pesadas.",
+                    "Porque sus partículas forman anillos hexagonales con espacios vacíos en el centro.",
+                    "Porque el hielo no tiene partículas."
+                ],
+                correct: 2,
+                exp: "¡Excelente! La red hexagonal del hielo deja huecos microscópicos, haciéndolo menos denso que el agua líquida."
+            }
+        ];
+
+        let currentQuestionIdx = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const qData = quizQuestions[currentQuestionIdx];
+            document.getElementById('quizProgress').innerText = `Pregunta ${currentQuestionIdx + 1} de ${quizQuestions.length}`;
+            document.getElementById('quizQuestion').innerText = qData.q;
+            document.getElementById('quizFeedback').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('quizOptions');
+            optionsContainer.innerHTML = '';
+
+            qData.options.forEach((optText, i) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 text-sm font-medium transition-all flex items-center justify-between group";
+                btn.innerHTML = `
+                    <span>${optText}</span>
+                    <i class="fa-regular fa-circle text-slate-500 group-hover:text-sky-400"></i>
+                `;
+                btn.onclick = () => checkAnswer(i);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIdx) {
+            const qData = quizQuestions[currentQuestionIdx];
+            const optionsBtns = document.getElementById('quizOptions').children;
+            const feedbackBox = document.getElementById('quizFeedback');
+            const feedbackText = document.getElementById('quizFeedbackText');
+
+            // Disable all option buttons after click
+            for (let btn of optionsBtns) {
+                btn.disabled = true;
+                btn.classList.add('cursor-not-allowed', 'opacity-60');
+            }
+
+            if (selectedIdx === qData.correct) {
+                score += 25;
+                document.getElementById('quizScore').innerText = `Puntos: ${score}`;
+                optionsBtns[selectedIdx].className = "w-full text-left p-4 rounded-xl bg-emerald-500/20 border-2 border-emerald-500 text-emerald-200 font-bold text-sm flex items-center justify-between";
+                optionsBtns[selectedIdx].innerHTML += `<i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>`;
+
+                feedbackBox.className = "p-4 rounded-xl text-sm font-medium bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 flex items-center justify-between mt-4";
+                feedbackText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 mr-2"></i> ${qData.exp}`;
+            } else {
+                optionsBtns[selectedIdx].className = "w-full text-left p-4 rounded-xl bg-red-500/20 border-2 border-red-500 text-red-200 font-bold text-sm flex items-center justify-between";
+                optionsBtns[qData.correct].className = "w-full text-left p-4 rounded-xl bg-emerald-500/20 border-2 border-emerald-500 text-emerald-200 font-bold text-sm flex items-center justify-between";
+                
+                feedbackBox.className = "p-4 rounded-xl text-sm font-medium bg-red-500/20 border border-red-500/40 text-red-200 flex items-center justify-between mt-4";
+                feedbackText.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-400 mr-2"></i> ¡Casi! La respuesta correcta era otra. ${qData.exp}`;
+            }
+
+            feedbackBox.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestionIdx++;
+            if (currentQuestionIdx < quizQuestions.length) {
+                loadQuestion();
+            } else {
+                showFinalResults();
+            }
+        }
+
+        function showFinalResults() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            const resultModal = document.getElementById('quizResultModal');
+            resultModal.classList.remove('hidden');
+            
+            const resText = document.getElementById('finalResultText');
+            resText.innerText = `Lograste ${score} de 100 puntos. ¡Demostraste conocer muy bien el comportamiento corpuscular de los cristales!`;
+        }
+
+        function restartQuiz() {
+            currentQuestionIdx = 0;
+            score = 0;
+            document.getElementById('quizScore').innerText = `Puntos: 0`;
+            document.getElementById('quizResultModal').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            loadQuestion();
+        }
+
+
+        /* ----------------------------------------------------
+           4. PAGE INITIALIZATION & NAVIGATION LOGIC
+           ---------------------------------------------------- */
+        window.onload = function() {
+            init3D();
+            initLabCanvas();
+            loadQuestion();
+
+            // Mobile Navigation Menu Toggle
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        };
+    </script>
+</body>
+</html>
